@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Menu</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: silver;
+      background-image: url(fundo.png);
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #333;
+      color: white;
+      padding: 10px;
+      text-align: center;
+    }
+
+    nav {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: #333;
+      padding: 10px 20px;
+      margin: 0 10px;
+      background-color: #ddd;
+      border-radius: 5px;
+      transition: background-color 0.3s ease;
+    }
+
+    nav a:hover {
+      background-color: #bbb;
+    }
+
+    footer {
+      background-color: #333;
+      color: white;
+      padding: 10px;
+      text-align: center;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Sistema de Bate-Papo</h1>
+  </header>
+  <nav>
+    <a href="/cadastro.html">Cadastro de Usuários</a>
+    <a href="/bate-papo.html">Bate-papo</a>
+  </nav>
+  <footer>
+    &copy; 2024  Bate-Papo<br>
+    By Sergio de Almeida<br>
+    <input id="date" type="date" />
+
+    <p>Último Acesso em: <%= dataHoraAtual %> </p>
+  </footer>
+  <label for="appt">Choose a time for your meeting:</label>
+
+<input type="time" id="appt" name="appt" min="09:00" max="18:00" required />
+
+<small>Office hours are 9am to 6pm</small>
+
+  
+</body>
+</html>
+

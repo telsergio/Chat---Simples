@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bate-Papo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            height: 100vh;
+        }
+
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        select, textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 16px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #4caf50;
+            color: #fff;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 90%;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        div {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+            width: 400px;
+        }
+
+        .back-button {
+            margin-top: auto;
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 15px;
+            border-radius: 4px;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .back-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <form  id="message-form" action="/postar-mensagem" method="post">
+        <div>
+            <label for="user">Usuário:</label>
+            <select id="user" name="usuario" ></select>
+
+            <label for="message">Mensagem:</label>
+            <textarea id="message" name="mensagem" rows="4"></textarea>
+
+            <button type="submit">Enviar Mensagem</button>
+        </div>
+    </form>
+    <ul id="sms" style="max-height: 300px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; margin-bottom: 10px; width: 400px;"></ul>
+    <a href="/menu" class="back-button">Voltar ao Menu</a>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            selecioneusuario();
+            posmensagens(); 
+        });
+    
+        async function selecioneusuario() {
+            try {
+                const response = await fetch('/get-usuarios');
+                const data = await response.json();
+    
+                const selectUsuario = document.getElementById('user'); 
+                selectUsuario.innerHTML = "";
+    
+                data.usuarios.forEach(usuario => {
+                    const criar = document.createElement('option');
+                    criar.value = usuario.nickname; 
+                    criar.text = usuario.nome;
+                    selectUsuario.add(criar);
+                });
+            } catch (error) {
+                console.error('Não foi possível acessar usuários:', error);
+            }
+        }
+    
+        async function posmensagens() {
+    try {
+        const response = await fetch('/get-messages');
+        const data = await response.json();
+        console.log('Dados recebidos:', data);
+        const smsDiv = document.getElementById('sms');
+        smsDiv.innerHTML = '';
+
+        data.messages.forEach(message => {
+            const messageElement = document.createElement('li');
+            messageElement.innerHTML = `<strong>${message.usuario}:</strong> ${message.mensagem} - Enviada em ${message.dataHora}`;
+            smsDiv.appendChild(messageElement);
+        });
+    } catch (error) {
+        console.error('Não foi possivel obter mensagens:', error);
+    }
+}
+
+form.addEventListener('submit', async function (event) {
+    event.preventDefault();
+    console.log('Função postar chamada.');
+
+    const usuarioSelecionado = document.getElementById('user').value;
+    const mensagem = document.getElementById('message').value;
+
+    const dataHoraAtual = new Date().toLocaleString();
+
+    if (!usuarioSelecionado || !mensagem) {
+        
+ 
+alert('Por favor, selecione um usuário e preencha o campo de mensagem.');
+        return;
+    }
+
+    try {
+        const response = await fetch('/postar-mensagem', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            
+   
+body: JSON.stringify({ usuario: usuarioSelecionado, mensagem: mensagem }),
+        });
+
+        if (!response.ok) {
+            throw new Error('Erro ao enviar mensagem. Por favor, tente novamente.');
+        }
+
+        document.getElementById('message').value = '';
+        posmensagens();
+    } catch (error) {
+        console.error('Erro ao enviar mensagem:', error.message);
+        alert('Erro ao enviar mensagem. Por favor, tente novamente.');
+    }
+});
+    async function postar() {
+
+        const usuarioSelecionado = document.getElementById('user').value;
+        const mensagem = document.getElementById('message').value;
+                    
+        const dataHoraAtual = new Date().toLocaleString();
+
+        if (!usuarioSelecionado || !mensagem) {
+            alert('Por favor, selecione um usuário e preencha o campo de mensagem.');
+            return;
+        }
+
+        try {
+            const response = await fetch('/postar-mensagem', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ usuario: usuarioSelecionado, mensagem: mensagem }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Erro ao enviar mensagem. Por favor, tente novamente.');
+            }
+
+            document.getElementById('message').value = '';
+            posmensagens();
+        } catch (error) {
+            console.error('Erro ao enviar mensagem:', error.message);
+            alert('Erro ao enviar mensagem. Por favor, tente novamente.');
+        }
+    }
+
+    </script>    
+</body>
+</html>
